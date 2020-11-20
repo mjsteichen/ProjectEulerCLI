@@ -13,7 +13,8 @@ export default class Problem001 extends Command {
     const {args} = this.parse(Problem001)
     const upperLimit = Number(args.upperLimit)
     const numbers = [...new Array(upperLimit).keys()]
-    const sum = numbers
+    const sum =
+      numbers
       .filter(x => x % 3 === 0 || x % 5 === 0)
       .reduce((accumulated, next) => accumulated + next)
     this.log(`The sum of all the multiples of 3 or 5 below ${upperLimit} is ${sum}`)
