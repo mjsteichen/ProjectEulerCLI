@@ -16,18 +16,18 @@ export default class Problem002 extends Command {
   async run() {
     const {args} = this.parse(Problem002)
     const fibonacciUpperLimit = Number(args.fibonacciUpperLimit)
-    const fibonacci = this.fibCreator([1, 2], fibonacciUpperLimit)
+    const fibonacci = this.fibonacciCreator([1, 2], fibonacciUpperLimit)
     const sum = fibonacci.filter(x => x % 2 === 0).reduce((accumulated, next) => accumulated + next)
     this.log(`Considering the fibonacci sequence that doesn't go beyond ${fibonacciUpperLimit} the sum of the even terms in the sequence is ${sum}`)
   }
 
-  fibCreator(fibSequence: number[], biggestNumberAllowed: number): number[] {
-    const lastNumber = fibSequence[fibSequence.length - 1]
-    if (lastNumber >= biggestNumberAllowed) {
-      return fibSequence.slice(0, fibSequence.length - 1)
+  fibonacciCreator(sequence: number[], biggestNumberAllowed: number): number[] {
+    const lastNumber = sequence[sequence.length - 1]
+    if (lastNumber > biggestNumberAllowed) {
+      return sequence.slice(0, sequence.length - 1)
     }
-    const nextValue = fibSequence[fibSequence.length - 2] + lastNumber
-    fibSequence.push(nextValue)
-    return this.fibCreator(fibSequence, biggestNumberAllowed)
+    const nextValue = sequence[sequence.length - 2] + lastNumber
+    sequence.push(nextValue)
+    return this.fibonacciCreator(sequence, biggestNumberAllowed)
   }
 }

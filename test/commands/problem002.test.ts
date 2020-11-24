@@ -19,6 +19,6 @@ describe('problem002', () => {
   .stdout()
   .command(['problem002', '4000000'])
   .it('runs problem002 4000000', ctx => {
-    expect(ctx.stdout).to.contain('23')
+    expect(ctx.stdout).to.contain('4613732')
   })
 })
