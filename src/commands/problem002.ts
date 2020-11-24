@@ -21,7 +21,10 @@ export default class Problem002 extends Command {
     const {args} = this.parse(Problem002)
     const fibonacciUpperLimit = Number(args.fibonacciUpperLimit)
     const fibonacci = this.fibonacciCreator([1, 2], fibonacciUpperLimit)
-    const sum = fibonacci.filter(x => x % 2 === 0).reduce((accumulated, next) => accumulated + next)
+    const sum =
+      fibonacci
+      .filter(x => x % 2 === 0)
+      .reduce((accumulated, next) => accumulated + next)
     this.log(`Considering the fibonacci sequence that doesn't go beyond ${fibonacciUpperLimit} the sum of the even terms in the sequence is ${sum}`)
   }
 
