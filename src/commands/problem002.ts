@@ -1,4 +1,4 @@
-import {Command} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 
 export default class Problem002 extends Command {
   static description = `
@@ -10,6 +10,10 @@ export default class Problem002 extends Command {
   By considering the terms in the Fibonacci sequence whose values do not exceed four million,
   find the sum of the even-valued terms.
   `
+
+  static flags = {
+    help: flags.help({char: 'h'}),
+  }
 
   static args = [{name: 'fibonacciUpperLimit'}]
 

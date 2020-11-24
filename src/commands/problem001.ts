@@ -1,4 +1,4 @@
-import {Command} from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 
 export default class Problem001 extends Command {
   static description = `
@@ -6,6 +6,10 @@ export default class Problem001 extends Command {
     The sum of these multiples is 23.
     Find the sum of all the multiples of 3 or 5 below 1000.
   `
+
+  static flags = {
+    help: flags.help({char: 'h'}),
+  }
 
   static args = [{name: 'upperLimit'}]
 
