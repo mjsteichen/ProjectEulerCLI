@@ -23,6 +23,7 @@ export default class Problem003 extends Command {
   async run() {
     const {args} = this.parse(Problem003)
     const number = Number(args.number)
+    let largestPrimeFactor
     if (number === 0 || number === 1) {
       this.log(`${number} is a special butterfly and is not prime.`)
       return
@@ -31,21 +32,25 @@ export default class Problem003 extends Command {
       number * -1
     }
     const t0 = moment()
-    let divisor = 2
-    while (number % divisor !== 0) {
-      divisor = this.findNextPrimeNumber(divisor)
+    if (this.isPrime(number)) {
+      largestPrimeFactor = number
+    } else {
+      let divisor = 2
+      while (number % divisor !== 0) {
+        divisor = this.findNextPrimeNumber(divisor)
+      }
+      const primeFactorialTree: Tree<number> = {
+        value: number,
+        left: divisor,
+        right: {
+          value: number / divisor,
+        },
+      }
+      largestPrimeFactor = this.findLargestPrimeFactor(primeFactorialTree)
     }
-    const primeFactorialTree: Tree<number> = {
-      value: number,
-      left: divisor,
-      right: {
-        value: number / divisor,
-      },
-    }
-    const largestPrimeFactor = this.findLargestPrimeFactor(primeFactorialTree)
     this.log(`The largest prime factor of ${number} is ${largestPrimeFactor}`)
     const t1 = moment()
-    const executionTimeMinutes = moment.duration(t1.diff(t0)).asMinutes()
+    const executionTimeMinutes = moment.duration(t1.diff(t0)).asSeconds()
     this.log(`Execution time (mins): ${executionTimeMinutes}`)
   }
 
@@ -53,6 +58,7 @@ export default class Problem003 extends Command {
     if (this.isPrime(tree.right!.value)) {
       return tree.right!.value
     }
+    this.log(`Looking at ${tree.right!.value}`)
     let divisor = tree.left!
     while (tree.right!.value % divisor !== 0) {
       divisor = this.findNextPrimeNumber(divisor)
