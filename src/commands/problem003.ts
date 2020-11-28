@@ -1,6 +1,12 @@
 import {Command, flags} from '@oclif/command'
 import * as moment from 'moment'
 
+type Tree<T> = {
+  value: T;
+  left?: T;
+  right?: Tree<T>;
+};
+
 export default class Problem003 extends Command {
   static description = `
   The prime factors of 13195 are 5, 7, 13 and 29.
@@ -25,39 +31,65 @@ export default class Problem003 extends Command {
       number * -1
     }
     const t0 = moment()
-    const factors = this.getNonTrivialDivisors(number)
-    const primeFactors = factors.filter(x => this.isPrime(x))
-    // console.log(number, primeFactors)
-    let largestPrimeFactor: number
-    if (primeFactors.length === 0 && this.isPrime(number)) {
-      largestPrimeFactor = number
-    } else if (primeFactors.length > 0) {
-      largestPrimeFactor = primeFactors[0]
-    } else {
-      return this.error(`Could not find largest prime factor for ${number}`)
+    let divisor = 2
+    while (number % divisor !== 0) {
+      divisor = this.findNextPrimeNumber(divisor)
     }
+    const primeFactorialTree: Tree<number> = {
+      value: number,
+      left: divisor,
+      right: {
+        value: number / divisor,
+      },
+    }
+    const largestPrimeFactor = this.findLargestPrimeFactor(primeFactorialTree)
     this.log(`The largest prime factor of ${number} is ${largestPrimeFactor}`)
     const t1 = moment()
     const executionTimeMinutes = moment.duration(t1.diff(t0)).asMinutes()
     this.log(`Execution time (mins): ${executionTimeMinutes}`)
   }
 
-  // TIL that non-trivial divisors is the term for the interesting divisors
+  findLargestPrimeFactor(tree: Tree<number>): number {
+    if (this.isPrime(tree.right!.value)) {
+      return tree.right!.value
+    }
+    let divisor = tree.left!
+    while (tree.right!.value % divisor !== 0) {
+      divisor = this.findNextPrimeNumber(divisor)
+    }
+    const newTree: Tree<number> = {
+      value: tree.right!.value,
+      left: divisor,
+      right: {
+        value: tree.right!.value / divisor,
+      },
+    }
+    return this.findLargestPrimeFactor(newTree)
+  }
+
+  findNextPrimeNumber(num: number) {
+    let x = num + 1
+    while (!this.isPrime(x)) {
+      x++
+    }
+    return x
+  }
+
+  // TIL that non-trivial divisors is the term for the "interesting" divisors
   // i.e. divisors that are not: 1, -1, n, and -n
-  getNonTrivialDivisors(number: number, isShortCircuitEnabled = false): number[] {
-    const factors = []
-    const largestPossibleDivisor = Math.floor(number / 2)
-    let x = largestPossibleDivisor
-    while (x > 1) {
+  getDivisors(number: number): number[] {
+    const factors: number[] = []
+    if (number === 0) {
+      return factors
+    }
+    let x = 1
+    while (x <= (number / 2)) {
       if (number % x === 0) {
         factors.push(x)
-        this.log(`pushing ${x}`)
-        if (isShortCircuitEnabled) {
-          break
-        }
       }
-      x--
+      x++
     }
+    factors.push(number)
     return factors
   }
 
@@ -66,14 +98,12 @@ export default class Problem003 extends Command {
   // so all even numbers are by nature not prime
   isPrime(number: number): boolean {
     if (number <= 1) {
-      this.warn(`${number} is a special case when it comes to prime numbers. Best consult a mathematician.`)
+      this.warn(`${number} is a special case when it comes to prime numbers (hint: it's not). Best consult a mathematician.`)
       return false
     }
-    if (number === 2) {
-      return true
+    if (number % 2 === 0 && number !== 2) {
+      return false
     }
-    const divisors = this.getNonTrivialDivisors(number, true)
-    const isPrime = divisors.length === 0
-    return number % 2 !== 0 && isPrime
+    return this.getDivisors(number).length === 2
   }
 }
