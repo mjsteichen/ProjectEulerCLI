@@ -17,33 +17,47 @@ export default class Problem003 extends Command {
   async run() {
     const {args} = this.parse(Problem003)
     const number = Number(args.number)
+    if (number === 0 || number === 1) {
+      this.log(`${number} is a special butterfly and is not prime.`)
+      return
+    }
+    if (Math.sign(number) === -1) {
+      number * -1
+    }
     const t0 = moment()
-    const factors = this.getDivisors(number)
+    const factors = this.getNonTrivialDivisors(number)
     const primeFactors = factors.filter(x => this.isPrime(x))
-    const largestPrimeFactor = primeFactors[primeFactors.length - 1]
+    // console.log(number, primeFactors)
+    let largestPrimeFactor: number
+    if (primeFactors.length === 0 && this.isPrime(number)) {
+      largestPrimeFactor = number
+    } else if (primeFactors.length > 0) {
+      largestPrimeFactor = primeFactors[0]
+    } else {
+      return this.error(`Could not find largest prime factor for ${number}`)
+    }
     this.log(`The largest prime factor of ${number} is ${largestPrimeFactor}`)
     const t1 = moment()
     const executionTimeMinutes = moment.duration(t1.diff(t0)).asMinutes()
     this.log(`Execution time (mins): ${executionTimeMinutes}`)
   }
 
-  // how to get multiples of a number.
-  // 1 and itself are always multiples
-  // other than that, starting at 1, go up to number/2,
-  // testing to see if that number has a remainder using modulus
-  getDivisors(number: number): number[] {
-    if (number === 0) {
-      return []
-    }
+  // TIL that non-trivial divisors is the term for the interesting divisors
+  // i.e. divisors that are not: 1, -1, n, and -n
+  getNonTrivialDivisors(number: number, isShortCircuitEnabled = false): number[] {
     const factors = []
-    let x = 1
-    while (x <= (number / 2)) {
+    const largestPossibleDivisor = Math.floor(number / 2)
+    let x = largestPossibleDivisor
+    while (x > 1) {
       if (number % x === 0) {
         factors.push(x)
+        this.log(`pushing ${x}`)
+        if (isShortCircuitEnabled) {
+          break
+        }
       }
-      x++
+      x--
     }
-    factors.push(number) // a number is always divisble by itself
     return factors
   }
 
@@ -58,9 +72,8 @@ export default class Problem003 extends Command {
     if (number === 2) {
       return true
     }
-    const divisors = this.getDivisors(number)
-    const primeCandidates = divisors.filter(x => x !== 1 && x !== number)
-    const isPrime = primeCandidates.length === 0
+    const divisors = this.getNonTrivialDivisors(number, true)
+    const isPrime = divisors.length === 0
     return number % 2 !== 0 && isPrime
   }
 }
