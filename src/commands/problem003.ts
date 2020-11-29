@@ -22,14 +22,14 @@ export default class Problem003 extends Command {
 
   async run() {
     const {args} = this.parse(Problem003)
-    const number = Number(args.number)
-    let largestPrimeFactor
+    let number = Number(args.number)
+    let largestPrimeFactor: number
     if (number === 0 || number === 1) {
-      this.log(`${number} is a special butterfly and is not prime.`)
+      this.log(`${number} is complicated; best consult a mathematician.`)
       return
     }
     if (Math.sign(number) === -1) {
-      number * -1
+      number *= -1
     }
     const t0 = moment()
     if (this.isPrime(number)) {
@@ -50,15 +50,14 @@ export default class Problem003 extends Command {
     }
     this.log(`The largest prime factor of ${number} is ${largestPrimeFactor}`)
     const t1 = moment()
-    const executionTimeMinutes = moment.duration(t1.diff(t0)).asSeconds()
-    this.log(`Execution time (mins): ${executionTimeMinutes}`)
+    const executionTimeMilliseconds = moment.duration(t1.diff(t0)).asMilliseconds()
+    this.log(`Execution time (ms): ${executionTimeMilliseconds}`)
   }
 
   findLargestPrimeFactor(tree: Tree<number>): number {
     if (this.isPrime(tree.right!.value)) {
       return tree.right!.value
     }
-    this.log(`Looking at ${tree.right!.value}`)
     let divisor = tree.left!
     while (tree.right!.value % divisor !== 0) {
       divisor = this.findNextPrimeNumber(divisor)
@@ -83,20 +82,19 @@ export default class Problem003 extends Command {
 
   // TIL that non-trivial divisors is the term for the "interesting" divisors
   // i.e. divisors that are not: 1, -1, n, and -n
-  getDivisors(number: number): number[] {
-    const factors: number[] = []
-    if (number === 0) {
-      return factors
+  hasANonTrivialDivisor(number: number): boolean {
+    if (number <= 1) {
+      return false
     }
-    let x = 1
-    while (x <= (number / 2)) {
+    let x = 2
+    while (x <= number) {
       if (number % x === 0) {
-        factors.push(x)
+        break
       }
       x++
     }
-    factors.push(number)
-    return factors
+    const hasANonTrivialDivisor = x !== 1 && x !== number
+    return hasANonTrivialDivisor
   }
 
   // How to tell if a number is prime?
@@ -110,6 +108,6 @@ export default class Problem003 extends Command {
     if (number % 2 === 0 && number !== 2) {
       return false
     }
-    return this.getDivisors(number).length === 2
+    return !this.hasANonTrivialDivisor(number)
   }
 }

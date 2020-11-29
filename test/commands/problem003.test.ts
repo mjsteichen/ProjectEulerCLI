@@ -3,9 +3,23 @@ import {expect, test} from '@oclif/test'
 describe('problem003', () => {
   test
   .stdout()
+  .command(['problem003', '2'])
+  .it('runs problem003 2', ctx => {
+    expect(ctx.stdout).to.contain('2')
+  })
+
+  test
+  .stdout()
   .command(['problem003', '3'])
   .it('runs problem003 3', ctx => {
     expect(ctx.stdout).to.contain('3')
+  })
+
+  test
+  .stdout()
+  .command(['problem003', '-10'])
+  .it('runs problem003 -10', ctx => {
+    expect(ctx.stdout).to.contain('5')
   })
 
   test
@@ -43,10 +57,10 @@ describe('problem003', () => {
     expect(ctx.stdout).to.contain('14281')
   })
 
-  // test
-  // .stdout()
-  // .command(['problem003', '600851475143'])
-  // .it('runs problem003 600851475143', ctx => {
-  //   expect(ctx.stdout).to.contain('29')
-  // })
+  test
+  .stdout()
+  .command(['problem003', '600851475143'])
+  .it('runs problem003 600851475143', ctx => {
+    expect(ctx.stdout).to.contain('6857')
+  })
 })
