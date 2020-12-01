@@ -1,5 +1,4 @@
 import {Command, flags} from '@oclif/command'
-import { string } from '@oclif/command/lib/flags'
 import * as moment from 'moment'
 type Answer = {
   multiplicand: number;
