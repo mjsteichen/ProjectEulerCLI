@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import * as moment from 'moment'
+import MathUtils from '../utils/math'
 
 type Tree<T> = {
   value: T;
@@ -32,12 +33,12 @@ export default class Problem003 extends Command {
       number *= -1
     }
     const t0 = moment()
-    if (this.isPrime(number)) {
+    if (MathUtils.isPrime(number)) {
       largestPrimeFactor = number
     } else {
       let divisor = 2
       while (number % divisor !== 0) {
-        divisor = this.findNextPrimeNumber(divisor)
+        divisor = MathUtils.findNextPrimeNumber(divisor)
       }
       const primeFactorialTree: Tree<number> = {
         value: number,
@@ -55,59 +56,21 @@ export default class Problem003 extends Command {
   }
 
   findLargestPrimeFactor(tree: Tree<number>): number {
-    if (this.isPrime(tree.right!.value)) {
-      return tree.right!.value
+    const rightLeaf = tree.right!.value
+    if (MathUtils.isPrime(rightLeaf)) {
+      return rightLeaf
     }
     let divisor = tree.left!
-    while (tree.right!.value % divisor !== 0) {
-      divisor = this.findNextPrimeNumber(divisor)
+    while (rightLeaf % divisor !== 0) {
+      divisor = MathUtils.findNextPrimeNumber(divisor)
     }
     const newTree: Tree<number> = {
-      value: tree.right!.value,
+      value: rightLeaf,
       left: divisor,
       right: {
-        value: tree.right!.value / divisor,
+        value: rightLeaf / divisor,
       },
     }
     return this.findLargestPrimeFactor(newTree)
-  }
-
-  findNextPrimeNumber(num: number) {
-    let x = num + 1
-    while (!this.isPrime(x)) {
-      x++
-    }
-    return x
-  }
-
-  // TIL that non-trivial divisors is the term for the "interesting" divisors
-  // i.e. divisors that are not: 1, -1, n, and -n
-  hasANonTrivialDivisor(number: number): boolean {
-    if (number <= 1) {
-      return false
-    }
-    let x = 2
-    while (x <= number) {
-      if (number % x === 0) {
-        break
-      }
-      x++
-    }
-    const hasANonTrivialDivisor = x !== 1 && x !== number
-    return hasANonTrivialDivisor
-  }
-
-  // How to tell if a number is prime?
-  // prime means it is only divisible by 1 and itself
-  // so all even numbers are by nature not prime
-  isPrime(number: number): boolean {
-    if (number <= 1) {
-      this.warn(`${number} is a special case when it comes to prime numbers (hint: it's not). Best consult a mathematician.`)
-      return false
-    }
-    if (number % 2 === 0 && number !== 2) {
-      return false
-    }
-    return !this.hasANonTrivialDivisor(number)
   }
 }
