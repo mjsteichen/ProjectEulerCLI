@@ -1,5 +1,4 @@
-import {Command, flags} from '@oclif/command'
-import * as moment from 'moment'
+import Command from '../base'
 import MathUtils from '../utils/math'
 
 export default class Problem007 extends Command {
@@ -10,7 +9,7 @@ export default class Problem007 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   static args = [{name: 'nthPrimeNumber'}]
@@ -18,7 +17,6 @@ export default class Problem007 extends Command {
   async run() {
     const {args} = this.parse(Problem007)
     const nthPrimeNumber = Number(args.nthPrimeNumber)
-    const t0 = moment()
     const primeNumbers: number[] = [2]
     let number = 2
     while (primeNumbers.length < nthPrimeNumber) {
@@ -26,8 +24,5 @@ export default class Problem007 extends Command {
       primeNumbers.push(number)
     }
     this.log(`The ${nthPrimeNumber} (st/nd/rd/th) prime number is ${primeNumbers[primeNumbers.length - 1]}`)
-    const t1 = moment()
-    const executionTimeMilliseconds = moment.duration(t1.diff(t0)).asMilliseconds()
-    this.log(`Execution time (ms): ${executionTimeMilliseconds}`)
   }
 }

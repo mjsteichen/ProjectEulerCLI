@@ -1,4 +1,4 @@
-import {Command, flags} from '@oclif/command'
+import Command from '../base'
 
 export default class Problem002 extends Command {
   static description = `
@@ -12,7 +12,7 @@ export default class Problem002 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   static args = [{name: 'fibonacciUpperLimit'}]

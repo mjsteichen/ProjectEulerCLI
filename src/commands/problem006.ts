@@ -1,5 +1,4 @@
-import {Command, flags} from '@oclif/command'
-import * as moment from 'moment'
+import Command from '../base'
 
 export default class Problem006 extends Command {
   static description = `
@@ -13,7 +12,7 @@ export default class Problem006 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   static args = [{name: 'upperLimit'}]
@@ -21,7 +20,6 @@ export default class Problem006 extends Command {
   async run() {
     const {args} = this.parse(Problem006)
     const upperLimit = Number(args.upperLimit)
-    const t0 = moment()
     let sum = 0
     let sumOfSquares = 0
     for (let i = 1; i <= upperLimit; i++) {
@@ -31,8 +29,5 @@ export default class Problem006 extends Command {
     const squareOfSums = sum ** 2
     const difference = squareOfSums - sumOfSquares
     this.log(`The difference between the sum of the squares of the first one hundred natural numbers and the square of the sum is ${difference}`)
-    const t1 = moment()
-    const executionTimeMilliseconds = moment.duration(t1.diff(t0)).asMilliseconds()
-    this.log(`Execution time (ms): ${executionTimeMilliseconds}`)
   }
 }

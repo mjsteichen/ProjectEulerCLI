@@ -1,5 +1,4 @@
-import {Command, flags} from '@oclif/command'
-import * as moment from 'moment'
+import Command from '../base'
 
 export default class Problem005 extends Command {
   static description = `
@@ -9,12 +8,11 @@ export default class Problem005 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   async run() {
     this.parse(Problem005)
-    const t0 = moment()
     // NOTE: is there any way to not just loop from 1 to infinity?
     // It takes about a second as is to run.
     // I'm sure there is a more clever way to go about this since so many
@@ -26,8 +24,5 @@ export default class Problem005 extends Command {
       number += 2
     }
     this.log(`Smallest number evenly divisble by 1..20 is ${number}`)
-    const t1 = moment()
-    const executionTimeMilliseconds = moment.duration(t1.diff(t0)).asMilliseconds()
-    this.log(`Execution time (ms): ${executionTimeMilliseconds}`)
   }
 }

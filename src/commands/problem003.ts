@@ -1,5 +1,4 @@
-import {Command, flags} from '@oclif/command'
-import * as moment from 'moment'
+import Command from '../base'
 import MathUtils from '../utils/math'
 
 type Tree<T> = {
@@ -16,7 +15,7 @@ export default class Problem003 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   static args = [{name: 'number'}]
@@ -32,7 +31,6 @@ export default class Problem003 extends Command {
     if (Math.sign(number) === -1) {
       number *= -1
     }
-    const t0 = moment()
     if (MathUtils.isPrime(number)) {
       largestPrimeFactor = number
     } else {
@@ -50,9 +48,6 @@ export default class Problem003 extends Command {
       largestPrimeFactor = this.findLargestPrimeFactor(primeFactorialTree)
     }
     this.log(`The largest prime factor of ${number} is ${largestPrimeFactor}`)
-    const t1 = moment()
-    const executionTimeMilliseconds = moment.duration(t1.diff(t0)).asMilliseconds()
-    this.log(`Execution time (ms): ${executionTimeMilliseconds}`)
   }
 
   findLargestPrimeFactor(tree: Tree<number>): number {

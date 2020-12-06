@@ -1,4 +1,4 @@
-import {Command, flags} from '@oclif/command'
+import Command from '../base'
 import * as moment from 'moment'
 type Answer = {
   multiplicand: number;
@@ -13,7 +13,7 @@ export default class Problem004 extends Command {
   `
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    ...Command.flags,
   }
 
   async run() {
