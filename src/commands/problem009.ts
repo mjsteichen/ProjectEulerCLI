@@ -16,24 +16,17 @@ export default class Problem009 extends Command {
     ...Command.flags,
   }
 
-  static args = [{name: 'sumOfTriplet'}]
-
   async run() {
-    const {args} = this.parse(Problem009)
-    const sumOfTriplet = Number(args.sumOfTriplet)
+    this.parse(Problem009)
     let triplet: number[] = []
-    for (let a = 1; a < sumOfTriplet; a++) {
+    for (let a = 1; a < 1000; a++) {
       const c = ((a ** 2) + 500000 - (1000 * a)) / (1000 - a)
-      const b = sumOfTriplet - c - a
-      const areIntegers = Number.isInteger(a) && Number.isInteger(b)
-      const isPythagorean = ((a ** 2) + (b ** 2)) === (c ** 2)
-      const sumIsFine = a + b + c === sumOfTriplet
-      if (areIntegers && sumIsFine && isPythagorean) {
+      const b = 1000 - c - a
+      if (Number.isInteger(b) && Number.isInteger(c)) {
         triplet = [a, b, c]
         break
       }
     }
-    this.log(`The Pythagorean triplet for ${sumOfTriplet} is ${triplet}`)
+    this.log(`The Pythagorean triplet for 1000 is ${triplet}`)
   }
 }
-// 200 * 375 * 425
