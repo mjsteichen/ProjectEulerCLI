@@ -3,22 +3,13 @@ export default class MathUtils {
     if (number <= 1) {
       throw new Error('Numbers smaller than or equal to 1 are not prime; best consult a mathematician.')
     }
-    if (number % 2 === 0 && number !== 2) {
-      return false
-    }
-    let divisor = 2
-    while (divisor <= number) {
-      if (number % divisor === 0) {
-        break
+    for (let i = 2; i <= Math.sqrt(number); i++) {
+      // console.log(`looking at ${i}`)
+      if (number % i === 0) {
+        return false
       }
-      if (divisor >= (number / 2)) {
-        // If we're past n/2 and have yet to find a non-trivial divisor, we can quit searching and assert it's prime
-        return true
-      }
-      divisor++
     }
-    const hasANonTrivialDivisor = divisor !== 1 && divisor !== number
-    return !hasANonTrivialDivisor
+    return true
   }
 
   static findNextPrimeNumber(num: number) {
