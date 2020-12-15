@@ -4,7 +4,6 @@ export default class MathUtils {
       throw new Error('Numbers smaller than or equal to 1 are not prime; best consult a mathematician.')
     }
     for (let i = 2; i <= Math.sqrt(number); i++) {
-      // console.log(`looking at ${i}`)
       if (number % i === 0) {
         return false
       }
