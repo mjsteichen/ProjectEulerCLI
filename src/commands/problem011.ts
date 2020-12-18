@@ -85,6 +85,22 @@ export default class Problem011 extends Command {
           const multiplicands: number[] = [row[i],  row[i - 1], row[i - 2], row[i - 3]]
           productsMapping.set(multiplicands, {Direction: 'West', Product: multiplicands.reduce((a, b) => a * b)})
         }
+        if (canGoNE) {
+          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i + 1], grid[rowIndex - 2][i + 2], grid[rowIndex - 3][i + 3]]
+          productsMapping.set(multiplicands, {Direction: 'NorthEast', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoNW) {
+          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i - 1], grid[rowIndex - 2][i - 2], grid[rowIndex - 3][i - 3]]
+          productsMapping.set(multiplicands, {Direction: 'NorthWest', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoSE) {
+          const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i + 1], grid[rowIndex + 2][i + 2], grid[rowIndex + 3][i + 3]]
+          productsMapping.set(multiplicands, {Direction: 'SouthEast', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoSW) {
+          const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i - 1], grid[rowIndex + 2][i - 2], grid[rowIndex + 3][i - 3]]
+          productsMapping.set(multiplicands, {Direction: 'SouthWest', Product: multiplicands.reduce((a, b) => a * b)})
+        }
         // console.log(`for number ${number}`)
         // console.log(`canGoN? ${canGoN}`)
         // console.log(`canGoE? ${canGoE}`)
@@ -96,8 +112,10 @@ export default class Problem011 extends Command {
         // console.log(`canGoNW? ${canGoNW}`)
       })
     })
-    console.log(productsMapping)
-    const product = 0
-    this.log(`the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${product}`)
+    const sortedProducts = [...productsMapping.values()].map(x => x.Product).sort((a, b) => b - a)
+    // console.log(sortedProducts)
+    // [...productsMapping.values()]
+    const greatestProduct = sortedProducts[0]
+    this.log(`the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${greatestProduct}`)
   }
 }
