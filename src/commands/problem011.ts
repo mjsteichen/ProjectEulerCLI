@@ -70,19 +70,19 @@ export default class Problem011 extends Command {
         const canGoSW = canGoS && canGoW
         const canGoNW = canGoN && canGoW
         if (canGoN) {
-          const multiplicands: number[] = [grid[rowIndex - 3][i], grid[rowIndex - 2][i], grid[rowIndex - 1][i], grid[rowIndex][i]]
+          const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex - 1][i], grid[rowIndex - 2][i], grid[rowIndex - 3][i]]
           productsMapping.set(multiplicands, {Direction: 'North', Product: multiplicands.reduce((a, b) => a * b)})
         }
         if (canGoE) {
-          const multiplicands: number[] = [row[i + 3], row[i + 2], row[i + 1], row[i]]
+          const multiplicands: number[] = [row[i],  row[i + 1], row[i + 2], row[i + 3]]
           productsMapping.set(multiplicands, {Direction: 'East', Product: multiplicands.reduce((a, b) => a * b)})
         }
         if (canGoS) {
-          const multiplicands: number[] = [grid[rowIndex + 3][i], grid[rowIndex + 2][i], grid[rowIndex + 1][i], grid[rowIndex][i]]
+          const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex + 1][i], grid[rowIndex + 2][i], grid[rowIndex + 3][i]]
           productsMapping.set(multiplicands, {Direction: 'South', Product: multiplicands.reduce((a, b) => a * b)})
         }
         if (canGoW) {
-          const multiplicands: number[] = [row[i - 3], row[i - 2], row[i - 1], row[i]]
+          const multiplicands: number[] = [row[i],  row[i - 1], row[i - 2], row[i - 3]]
           productsMapping.set(multiplicands, {Direction: 'West', Product: multiplicands.reduce((a, b) => a * b)})
         }
         // console.log(`for number ${number}`)
