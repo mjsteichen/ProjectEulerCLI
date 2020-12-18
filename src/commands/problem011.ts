@@ -58,6 +58,7 @@ export default class Problem011 extends Command {
       [20, 73, 35, 29, 78, 31, 90, 1, 74, 31, 49, 71, 48, 86, 81, 16, 23, 57, 5, 54],
       [1, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 1, 89, 19, 67, 48],
     ]
+    const productsMapping: Map<number[], { Direction: string, Product: number}> = new Map()
     grid.forEach((row, rowIndex) => {
       row.forEach((number, i) => {
         const canGoN = grid[rowIndex - 3] !== undefined
@@ -68,17 +69,34 @@ export default class Problem011 extends Command {
         const canGoSE = canGoS && canGoE
         const canGoSW = canGoS && canGoW
         const canGoNW = canGoN && canGoW
-        console.log(`for number ${number}`)
-        console.log(`canGoN? ${canGoN}`)
-        console.log(`canGoE? ${canGoE}`)
-        console.log(`canGoS? ${canGoS}`)
-        console.log(`canGoW? ${canGoW}`)
-        console.log(`canGoNE? ${canGoNE}`)
-        console.log(`canGoSE? ${canGoSE}`)
-        console.log(`canGoSW? ${canGoSW}`)
-        console.log(`canGoNW? ${canGoNW}`)
+        if (canGoN) {
+          const multiplicands: number[] = [grid[rowIndex - 3][i], grid[rowIndex - 2][i], grid[rowIndex - 1][i], grid[rowIndex][i]]
+          productsMapping.set(multiplicands, {Direction: 'North', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoE) {
+          const multiplicands: number[] = [row[i + 3], row[i + 2], row[i + 1], row[i]]
+          productsMapping.set(multiplicands, {Direction: 'East', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoS) {
+          const multiplicands: number[] = [grid[rowIndex + 3][i], grid[rowIndex + 2][i], grid[rowIndex + 1][i], grid[rowIndex][i]]
+          productsMapping.set(multiplicands, {Direction: 'South', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        if (canGoW) {
+          const multiplicands: number[] = [row[i - 3], row[i - 2], row[i - 1], row[i]]
+          productsMapping.set(multiplicands, {Direction: 'West', Product: multiplicands.reduce((a, b) => a * b)})
+        }
+        // console.log(`for number ${number}`)
+        // console.log(`canGoN? ${canGoN}`)
+        // console.log(`canGoE? ${canGoE}`)
+        // console.log(`canGoS? ${canGoS}`)
+        // console.log(`canGoW? ${canGoW}`)
+        // console.log(`canGoNE? ${canGoNE}`)
+        // console.log(`canGoSE? ${canGoSE}`)
+        // console.log(`canGoSW? ${canGoSW}`)
+        // console.log(`canGoNW? ${canGoNW}`)
       })
     })
+    console.log(productsMapping)
     const product = 0
     this.log(`the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${product}`)
   }
