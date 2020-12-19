@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import Command from '../base'
 
 export default class Problem011 extends Command {
@@ -58,7 +59,13 @@ export default class Problem011 extends Command {
       [20, 73, 35, 29, 78, 31, 90, 1, 74, 31, 49, 71, 48, 86, 81, 16, 23, 57, 5, 54],
       [1, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 1, 89, 19, 67, 48],
     ]
-    const productsMapping: Map<number[], { Direction: string, Product: number}> = new Map()
+    type ProductDescription = {
+      Direction: 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast' | 'Southwest' | 'Northwest';
+      Multiplicands: number[];
+      RowIndex: number;
+      ColumnIndex: number;
+    }
+    const productsMapping: Map<number, ProductDescription[]> = new Map()
     grid.forEach((row, rowIndex) => {
       row.forEach((number, i) => {
         const canGoN = grid[rowIndex - 3] !== undefined
@@ -71,51 +78,74 @@ export default class Problem011 extends Command {
         const canGoNW = canGoN && canGoW
         if (canGoN) {
           const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex - 1][i], grid[rowIndex - 2][i], grid[rowIndex - 3][i]]
-          productsMapping.set(multiplicands, {Direction: 'North', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'North', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoE) {
           const multiplicands: number[] = [row[i],  row[i + 1], row[i + 2], row[i + 3]]
-          productsMapping.set(multiplicands, {Direction: 'East', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'East', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoS) {
           const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex + 1][i], grid[rowIndex + 2][i], grid[rowIndex + 3][i]]
-          productsMapping.set(multiplicands, {Direction: 'South', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'South', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoW) {
           const multiplicands: number[] = [row[i],  row[i - 1], row[i - 2], row[i - 3]]
-          productsMapping.set(multiplicands, {Direction: 'West', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'West', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoNE) {
           const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i + 1], grid[rowIndex - 2][i + 2], grid[rowIndex - 3][i + 3]]
-          productsMapping.set(multiplicands, {Direction: 'NorthEast', Product: multiplicands.reduce((a, b) => a * b)})
-        }
-        if (canGoNW) {
-          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i - 1], grid[rowIndex - 2][i - 2], grid[rowIndex - 3][i - 3]]
-          productsMapping.set(multiplicands, {Direction: 'NorthWest', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'Northeast', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoSE) {
           const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i + 1], grid[rowIndex + 2][i + 2], grid[rowIndex + 3][i + 3]]
-          productsMapping.set(multiplicands, {Direction: 'SouthEast', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'Southeast', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
         if (canGoSW) {
           const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i - 1], grid[rowIndex + 2][i - 2], grid[rowIndex + 3][i - 3]]
-          productsMapping.set(multiplicands, {Direction: 'SouthWest', Product: multiplicands.reduce((a, b) => a * b)})
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'Southwest', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
         }
-        // console.log(`for number ${number}`)
-        // console.log(`canGoN? ${canGoN}`)
-        // console.log(`canGoE? ${canGoE}`)
-        // console.log(`canGoS? ${canGoS}`)
-        // console.log(`canGoW? ${canGoW}`)
-        // console.log(`canGoNE? ${canGoNE}`)
-        // console.log(`canGoSE? ${canGoSE}`)
-        // console.log(`canGoSW? ${canGoSW}`)
-        // console.log(`canGoNW? ${canGoNW}`)
+        if (canGoNW) {
+          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i - 1], grid[rowIndex - 2][i - 2], grid[rowIndex - 3][i - 3]]
+          const product = multiplicands.reduce((a, b) => a * b)
+          if (!productsMapping.has(product)) {
+            productsMapping.set(product, [])
+          }
+          productsMapping.get(product)!.push({Direction: 'Northwest', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+        }
       })
     })
-    const sortedProducts = [...productsMapping.values()].map(x => x.Product).sort((a, b) => b - a)
-    // console.log(sortedProducts)
-    // [...productsMapping.values()]
+    const sortedProducts = [...productsMapping.keys()].sort((a, b) => b - a)
     const greatestProduct = sortedProducts[0]
-    this.log(`the greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${greatestProduct}`)
+    const info = productsMapping.get(greatestProduct)
+    this.log(`The greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${greatestProduct}`)
+    this.log(`How we got there: ${JSON.stringify(info)}`)
   }
 }
