@@ -1,5 +1,94 @@
 /* eslint-disable complexity */
 import Command from '../base'
+type Direction = 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast' | 'Southwest' | 'Northwest'
+
+abstract class ProductDescription {
+  public rowIndex: number
+
+  public columnIndex: number
+
+  public grid: number[][]
+
+  public abstract direction: Direction
+
+  constructor(grid: number[][], rowIndex: number, columnIndex: number) {
+    this.grid = grid
+    this.rowIndex = rowIndex
+    this.columnIndex = columnIndex
+  }
+
+  get product(): number {
+    return this.multiplicands.reduce((a, b) => a * b)
+  }
+
+  get multiplicands(): number[] {
+    return []
+  }
+}
+
+class NorthboundProductDescription extends ProductDescription {
+  public direction: Direction = 'North'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex], this.grid[this.rowIndex - 1][this.columnIndex], this.grid[this.rowIndex - 2][this.columnIndex], this.grid[this.rowIndex - 3][this.columnIndex]]
+  }
+}
+
+class EastboundProductDescription extends ProductDescription {
+  public direction: Direction = 'East'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex][this.columnIndex + 1], this.grid[this.rowIndex][this.columnIndex + 2], this.grid[this.rowIndex][this.columnIndex + 3]]
+  }
+}
+
+class SouthboundProductDescription extends ProductDescription {
+  public direction: Direction = 'South'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex], this.grid[this.rowIndex + 1][this.columnIndex], this.grid[this.rowIndex + 2][this.columnIndex], this.grid[this.rowIndex + 3][this.columnIndex]]
+  }
+}
+
+class WestboundProductDescription extends ProductDescription {
+  public direction: Direction = 'West'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex][this.columnIndex - 1], this.grid[this.rowIndex][this.columnIndex - 2], this.grid[this.rowIndex][this.columnIndex - 3]]
+  }
+}
+
+class NortheastboundProductDescription extends ProductDescription {
+  public direction: Direction = 'Northeast'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex - 1][this.columnIndex + 1], this.grid[this.rowIndex - 2][this.columnIndex + 2], this.grid[this.rowIndex - 3][this.columnIndex + 3]]
+  }
+}
+
+class SoutheastboundProductDescription extends ProductDescription {
+  public direction: Direction = 'Southeast'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex + 1][this.columnIndex + 1], this.grid[this.rowIndex + 2][this.columnIndex + 2], this.grid[this.rowIndex + 3][this.columnIndex + 3]]
+  }
+}
+
+class SouthwestboundProductDescription extends ProductDescription {
+  public direction: Direction = 'Southwest'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex + 1][this.columnIndex - 1], this.grid[this.rowIndex + 2][this.columnIndex - 2], this.grid[this.rowIndex + 3][this.columnIndex - 3]]
+  }
+}
+
+class NorthwestboundProductDescription extends ProductDescription {
+  public direction: Direction = 'Northwest'
+
+  get multiplicands() {
+    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex - 1][this.columnIndex - 1], this.grid[this.rowIndex - 2][this.columnIndex - 2], this.grid[this.rowIndex - 3][this.columnIndex - 3]]
+  }
+}
 
 export default class Problem011 extends Command {
   static description = `
@@ -59,12 +148,6 @@ export default class Problem011 extends Command {
       [20, 73, 35, 29, 78, 31, 90, 1, 74, 31, 49, 71, 48, 86, 81, 16, 23, 57, 5, 54],
       [1, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 1, 89, 19, 67, 48],
     ]
-    type ProductDescription = {
-      Direction: 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast' | 'Southwest' | 'Northwest';
-      Multiplicands: number[];
-      RowIndex: number;
-      ColumnIndex: number;
-    }
     const productsMapping: Map<number, ProductDescription[]> = new Map()
     grid.forEach((row, rowIndex) => {
       row.forEach((number, i) => {
@@ -77,68 +160,28 @@ export default class Problem011 extends Command {
         const canGoSW = canGoS && canGoW
         const canGoNW = canGoN && canGoW
         if (canGoN) {
-          const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex - 1][i], grid[rowIndex - 2][i], grid[rowIndex - 3][i]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'North', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new NorthboundProductDescription(grid, rowIndex, i))
         }
         if (canGoE) {
-          const multiplicands: number[] = [row[i],  row[i + 1], row[i + 2], row[i + 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'East', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new EastboundProductDescription(grid, rowIndex, i))
         }
         if (canGoS) {
-          const multiplicands: number[] = [grid[rowIndex][i], grid[rowIndex + 1][i], grid[rowIndex + 2][i], grid[rowIndex + 3][i]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'South', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new SouthboundProductDescription(grid, rowIndex, i))
         }
         if (canGoW) {
-          const multiplicands: number[] = [row[i],  row[i - 1], row[i - 2], row[i - 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'West', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new WestboundProductDescription(grid, rowIndex, i))
         }
         if (canGoNE) {
-          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i + 1], grid[rowIndex - 2][i + 2], grid[rowIndex - 3][i + 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'Northeast', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new NortheastboundProductDescription(grid, rowIndex, i))
         }
         if (canGoSE) {
-          const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i + 1], grid[rowIndex + 2][i + 2], grid[rowIndex + 3][i + 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'Southeast', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new SoutheastboundProductDescription(grid, rowIndex, i))
         }
         if (canGoSW) {
-          const multiplicands: number[] = [row[i],  grid[rowIndex + 1][i - 1], grid[rowIndex + 2][i - 2], grid[rowIndex + 3][i - 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'Southwest', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new SouthwestboundProductDescription(grid, rowIndex, i))
         }
         if (canGoNW) {
-          const multiplicands: number[] = [row[i],  grid[rowIndex - 1][i - 1], grid[rowIndex - 2][i - 2], grid[rowIndex - 3][i - 3]]
-          const product = multiplicands.reduce((a, b) => a * b)
-          if (!productsMapping.has(product)) {
-            productsMapping.set(product, [])
-          }
-          productsMapping.get(product)!.push({Direction: 'Northwest', Multiplicands: multiplicands, RowIndex: rowIndex, ColumnIndex: i})
+          this.setMapping(productsMapping, new NorthwestboundProductDescription(grid, rowIndex, i))
         }
       })
     })
@@ -146,6 +189,13 @@ export default class Problem011 extends Command {
     const greatestProduct = sortedProducts[0]
     const info = productsMapping.get(greatestProduct)
     this.log(`The greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${greatestProduct}`)
-    this.log(`How we got there: ${JSON.stringify(info)}`)
+    // this.log(`How we got there: ${JSON.stringify(info)}`)
+  }
+
+  private setMapping(productsMapping: Map<number, ProductDescription[]>, description: ProductDescription) {
+    if (!productsMapping.has(description.product)) {
+      productsMapping.set(description.product, [])
+    }
+    productsMapping.get(description.product)!.push(description)
   }
 }
