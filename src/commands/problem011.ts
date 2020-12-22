@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import Command from '../base'
 type Direction = 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast' | 'Southwest' | 'Northwest'
 
@@ -187,9 +186,9 @@ export default class Problem011 extends Command {
     })
     const sortedProducts = [...productsMapping.keys()].sort((a, b) => b - a)
     const greatestProduct = sortedProducts[0]
-    const info = productsMapping.get(greatestProduct)
+    const info = productsMapping.get(greatestProduct)![0]
     this.log(`The greatest product of four adjacent numbers in the same direction (up, down, left, right, or diagonally) in the 20×20 grid is ${greatestProduct}`)
-    // this.log(`How we got there: ${JSON.stringify(info)}`)
+    this.log(`Using multiplicands ${info.multiplicands} going in ${info.direction} direction`)
   }
 
   private setMapping(productsMapping: Map<number, ProductDescription[]>, description: ProductDescription) {
