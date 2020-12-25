@@ -4,6 +4,7 @@
     "oclif-typescript"
   ],
   "rules": {
-    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }]
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 2 }],
+    "object-curly-spacing": ["error", "always"]
   }
 }

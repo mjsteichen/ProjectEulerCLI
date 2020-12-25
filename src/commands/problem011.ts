@@ -1,92 +1,9 @@
 import Command from '../base'
 type Direction = 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast' | 'Southwest' | 'Northwest'
-
-abstract class ProductDescription {
-  public rowIndex: number
-
-  public columnIndex: number
-
-  public grid: number[][]
-
-  public abstract direction: Direction
-
-  constructor(grid: number[][], rowIndex: number, columnIndex: number) {
-    this.grid = grid
-    this.rowIndex = rowIndex
-    this.columnIndex = columnIndex
-  }
-
-  get product(): number {
-    return this.multiplicands.reduce((a, b) => a * b)
-  }
-
-  get multiplicands(): number[] {
-    return []
-  }
-}
-
-class NorthboundProductDescription extends ProductDescription {
-  public direction: Direction = 'North'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex], this.grid[this.rowIndex - 1][this.columnIndex], this.grid[this.rowIndex - 2][this.columnIndex], this.grid[this.rowIndex - 3][this.columnIndex]]
-  }
-}
-
-class EastboundProductDescription extends ProductDescription {
-  public direction: Direction = 'East'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex][this.columnIndex + 1], this.grid[this.rowIndex][this.columnIndex + 2], this.grid[this.rowIndex][this.columnIndex + 3]]
-  }
-}
-
-class SouthboundProductDescription extends ProductDescription {
-  public direction: Direction = 'South'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex], this.grid[this.rowIndex + 1][this.columnIndex], this.grid[this.rowIndex + 2][this.columnIndex], this.grid[this.rowIndex + 3][this.columnIndex]]
-  }
-}
-
-class WestboundProductDescription extends ProductDescription {
-  public direction: Direction = 'West'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex][this.columnIndex - 1], this.grid[this.rowIndex][this.columnIndex - 2], this.grid[this.rowIndex][this.columnIndex - 3]]
-  }
-}
-
-class NortheastboundProductDescription extends ProductDescription {
-  public direction: Direction = 'Northeast'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex - 1][this.columnIndex + 1], this.grid[this.rowIndex - 2][this.columnIndex + 2], this.grid[this.rowIndex - 3][this.columnIndex + 3]]
-  }
-}
-
-class SoutheastboundProductDescription extends ProductDescription {
-  public direction: Direction = 'Southeast'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex + 1][this.columnIndex + 1], this.grid[this.rowIndex + 2][this.columnIndex + 2], this.grid[this.rowIndex + 3][this.columnIndex + 3]]
-  }
-}
-
-class SouthwestboundProductDescription extends ProductDescription {
-  public direction: Direction = 'Southwest'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex + 1][this.columnIndex - 1], this.grid[this.rowIndex + 2][this.columnIndex - 2], this.grid[this.rowIndex + 3][this.columnIndex - 3]]
-  }
-}
-
-class NorthwestboundProductDescription extends ProductDescription {
-  public direction: Direction = 'Northwest'
-
-  get multiplicands() {
-    return [this.grid[this.rowIndex][this.columnIndex],  this.grid[this.rowIndex - 1][this.columnIndex - 1], this.grid[this.rowIndex - 2][this.columnIndex - 2], this.grid[this.rowIndex - 3][this.columnIndex - 3]]
-  }
+type ProductDescription = {
+  direction: Direction;
+  multiplicands: number[];
+  isValid: boolean;
 }
 
 export default class Problem011 extends Command {
@@ -149,39 +66,10 @@ export default class Problem011 extends Command {
     ]
     const productsMapping: Map<number, ProductDescription[]> = new Map()
     grid.forEach((row, rowIndex) => {
-      row.forEach((number, i) => {
-        const canGoN = grid[rowIndex - 3] !== undefined
-        const canGoE = row[i + 3] !== undefined
-        const canGoS = grid[rowIndex + 3] !== undefined
-        const canGoW = row[i - 3] !== undefined
-        const canGoNE = canGoN && canGoE
-        const canGoSE = canGoS && canGoE
-        const canGoSW = canGoS && canGoW
-        const canGoNW = canGoN && canGoW
-        if (canGoN) {
-          this.setMapping(productsMapping, new NorthboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoE) {
-          this.setMapping(productsMapping, new EastboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoS) {
-          this.setMapping(productsMapping, new SouthboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoW) {
-          this.setMapping(productsMapping, new WestboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoNE) {
-          this.setMapping(productsMapping, new NortheastboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoSE) {
-          this.setMapping(productsMapping, new SoutheastboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoSW) {
-          this.setMapping(productsMapping, new SouthwestboundProductDescription(grid, rowIndex, i))
-        }
-        if (canGoNW) {
-          this.setMapping(productsMapping, new NorthwestboundProductDescription(grid, rowIndex, i))
-        }
+      row.forEach((number, columnIndex) => {
+        this._getDirections(grid, row, rowIndex, columnIndex)
+        .filter(x => x.isValid)
+        .forEach(x => this._setMapping(productsMapping, x.multiplicands.reduce((a, b) => a * b), x))
       })
     })
     const sortedProducts = [...productsMapping.keys()].sort((a, b) => b - a)
@@ -191,10 +79,59 @@ export default class Problem011 extends Command {
     this.log(`Using multiplicands ${info.multiplicands} going in ${info.direction} direction`)
   }
 
-  private setMapping(productsMapping: Map<number, ProductDescription[]>, description: ProductDescription) {
-    if (!productsMapping.has(description.product)) {
-      productsMapping.set(description.product, [])
+  private _setMapping(productsMapping: Map<number, ProductDescription[]>, product: number, description: ProductDescription) {
+    if (!productsMapping.has(product)) {
+      productsMapping.set(product, [])
     }
-    productsMapping.get(description.product)!.push(description)
+    productsMapping.get(product)!.push(description)
+  }
+
+  private _getDirections(grid: number[][], row: number[], rowIndex: number, columnIndex: number): ProductDescription[] {
+    const canGoNorth = grid[rowIndex - 3] !== undefined
+    const canGoEast = row[columnIndex + 3] !== undefined
+    const canGoSouth = grid[rowIndex + 3] !== undefined
+    const canGoWest = row[columnIndex - 3] !== undefined
+    return [
+      {
+        direction: 'North',
+        isValid: canGoNorth,
+        multiplicands: canGoNorth ? [grid[rowIndex][columnIndex], grid[rowIndex - 1][columnIndex], grid[rowIndex - 2][columnIndex], grid[rowIndex - 3][columnIndex]] : [],
+      },
+      {
+        direction: 'East',
+        isValid: canGoEast,
+        multiplicands: canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex][columnIndex + 1], grid[rowIndex][columnIndex + 2], grid[rowIndex][columnIndex + 3]] : [],
+      },
+      {
+        direction: 'South',
+        isValid: canGoSouth,
+        multiplicands: canGoSouth ? [grid[rowIndex][columnIndex], grid[rowIndex + 1][columnIndex], grid[rowIndex + 2][columnIndex], grid[rowIndex + 3][columnIndex]] : [],
+      },
+      {
+        direction: 'West',
+        isValid: canGoWest,
+        multiplicands: canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex][columnIndex - 1], grid[rowIndex][columnIndex - 2], grid[rowIndex][columnIndex - 3]] : [],
+      },
+      {
+        direction: 'Northeast',
+        isValid: canGoNorth && canGoEast,
+        multiplicands: canGoNorth && canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex - 1][columnIndex + 1], grid[rowIndex - 2][columnIndex + 2], grid[rowIndex - 3][columnIndex + 3]] : [],
+      },
+      {
+        direction: 'Southeast',
+        isValid: canGoSouth && canGoEast,
+        multiplicands: canGoSouth && canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex + 1][columnIndex + 1], grid[rowIndex + 2][columnIndex + 2], grid[rowIndex + 3][columnIndex + 3]] : [],
+      },
+      {
+        direction: 'Southwest',
+        isValid: canGoSouth && canGoWest,
+        multiplicands: canGoSouth && canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex + 1][columnIndex - 1], grid[rowIndex + 2][columnIndex - 2], grid[rowIndex + 3][columnIndex - 3]] : [],
+      },
+      {
+        direction: 'Northwest',
+        isValid: canGoNorth && canGoWest,
+        multiplicands: canGoNorth && canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex - 1][columnIndex - 1], grid[rowIndex - 2][columnIndex - 2], grid[rowIndex - 3][columnIndex - 3]] : [],
+      },
+    ]
   }
 }
