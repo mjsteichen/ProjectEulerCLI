@@ -69,7 +69,7 @@ export default class Problem011 extends Command {
       row.forEach((number, columnIndex) => {
         this._getDirections(grid, row, rowIndex, columnIndex)
         .filter(x => x.isPossible)
-        .forEach(x => this._setMapping(productsMapping, x.multiplicands.reduce((a, b) => a * b), x))
+        .forEach(x => this._setMapping(productsMapping, x))
       })
     })
     const sortedProducts = [...productsMapping.keys()].sort((a, b) => b - a)
@@ -79,7 +79,8 @@ export default class Problem011 extends Command {
     this.log(`Using multiplicands ${info.multiplicands} going in ${info.direction} direction`)
   }
 
-  private _setMapping(productsMapping: Map<number, ProductDescription[]>, product: number, description: ProductDescription) {
+  private _setMapping(productsMapping: Map<number, ProductDescription[]>, description: ProductDescription) {
+    const product = description.multiplicands.reduce((a, b) => a * b)
     if (!productsMapping.has(product)) {
       productsMapping.set(product, [])
     }
