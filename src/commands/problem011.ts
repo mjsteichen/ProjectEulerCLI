@@ -3,7 +3,7 @@ type Direction = 'North' | 'South' | 'East' | 'West' | 'Northeast' | 'Southeast'
 type ProductDescription = {
   direction: Direction;
   multiplicands: number[];
-  isValid: boolean;
+  isPossible: boolean;
 }
 
 export default class Problem011 extends Command {
@@ -68,7 +68,7 @@ export default class Problem011 extends Command {
     grid.forEach((row, rowIndex) => {
       row.forEach((number, columnIndex) => {
         this._getDirections(grid, row, rowIndex, columnIndex)
-        .filter(x => x.isValid)
+        .filter(x => x.isPossible)
         .forEach(x => this._setMapping(productsMapping, x.multiplicands.reduce((a, b) => a * b), x))
       })
     })
@@ -94,42 +94,42 @@ export default class Problem011 extends Command {
     return [
       {
         direction: 'North',
-        isValid: canGoNorth,
+        isPossible: canGoNorth,
         multiplicands: canGoNorth ? [grid[rowIndex][columnIndex], grid[rowIndex - 1][columnIndex], grid[rowIndex - 2][columnIndex], grid[rowIndex - 3][columnIndex]] : [],
       },
       {
         direction: 'East',
-        isValid: canGoEast,
+        isPossible: canGoEast,
         multiplicands: canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex][columnIndex + 1], grid[rowIndex][columnIndex + 2], grid[rowIndex][columnIndex + 3]] : [],
       },
       {
         direction: 'South',
-        isValid: canGoSouth,
+        isPossible: canGoSouth,
         multiplicands: canGoSouth ? [grid[rowIndex][columnIndex], grid[rowIndex + 1][columnIndex], grid[rowIndex + 2][columnIndex], grid[rowIndex + 3][columnIndex]] : [],
       },
       {
         direction: 'West',
-        isValid: canGoWest,
+        isPossible: canGoWest,
         multiplicands: canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex][columnIndex - 1], grid[rowIndex][columnIndex - 2], grid[rowIndex][columnIndex - 3]] : [],
       },
       {
         direction: 'Northeast',
-        isValid: canGoNorth && canGoEast,
+        isPossible: canGoNorth && canGoEast,
         multiplicands: canGoNorth && canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex - 1][columnIndex + 1], grid[rowIndex - 2][columnIndex + 2], grid[rowIndex - 3][columnIndex + 3]] : [],
       },
       {
         direction: 'Southeast',
-        isValid: canGoSouth && canGoEast,
+        isPossible: canGoSouth && canGoEast,
         multiplicands: canGoSouth && canGoEast ? [grid[rowIndex][columnIndex],  grid[rowIndex + 1][columnIndex + 1], grid[rowIndex + 2][columnIndex + 2], grid[rowIndex + 3][columnIndex + 3]] : [],
       },
       {
         direction: 'Southwest',
-        isValid: canGoSouth && canGoWest,
+        isPossible: canGoSouth && canGoWest,
         multiplicands: canGoSouth && canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex + 1][columnIndex - 1], grid[rowIndex + 2][columnIndex - 2], grid[rowIndex + 3][columnIndex - 3]] : [],
       },
       {
         direction: 'Northwest',
-        isValid: canGoNorth && canGoWest,
+        isPossible: canGoNorth && canGoWest,
         multiplicands: canGoNorth && canGoWest ? [grid[rowIndex][columnIndex],  grid[rowIndex - 1][columnIndex - 1], grid[rowIndex - 2][columnIndex - 2], grid[rowIndex - 3][columnIndex - 3]] : [],
       },
     ]
