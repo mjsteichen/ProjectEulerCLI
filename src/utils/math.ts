@@ -18,4 +18,19 @@ export default class MathUtils {
     }
     return x
   }
+
+  static findDivisors(num: number, sorted = false) {
+    const divisors: number[] = []
+    for (let x = 1; x <= Math.sqrt(num); x++) {
+      if (num % x === 0) {
+        const halved = num / x
+        if (halved === x) {
+          divisors.push(x)
+        } else {
+          divisors.push(x, halved)
+        }
+      }
+    }
+    return sorted ? divisors.sort((a, b) => a - b) : divisors
+  }
 }
