@@ -18,7 +18,7 @@ export default class Problem005 extends Command {
     // I'm sure there is a more clever way to go about this since so many
     // numbers share divisors: e.g., 20 is evenly divisible by 1, 2, 5, 10 and 20.
     // So perhaps we can eliminate some repetition there.
-    const divisors = Array.from({length: 20}, (_, i) => i + 1).reverse()
+    const divisors = Array.from({ length: 20 }, (_, i) => i + 1).reverse()
     let number = 20
     while (!divisors.every(x => number % x === 0)) {
       number += 2
