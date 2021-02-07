@@ -1,4 +1,4 @@
-import Command, {flags} from '@oclif/command'
+import Command, { flags } from '@oclif/command'
 import * as moment from 'moment'
 
 export default abstract class extends Command {

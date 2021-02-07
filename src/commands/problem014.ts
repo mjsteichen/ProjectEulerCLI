@@ -28,14 +28,15 @@ export default class Problem014 extends Command {
     const upperLimit = Number(args.upperLimit)
     const numberChains = new Map<number, number[]>()
 
+    let numberWithLongestChain = 1
     for (let num = 1; num < upperLimit; num++) {
-      numberChains.set(num, this._getCollatzSequence([num]))
+      const sequence = this._getCollatzSequence([num])
+      numberChains.set(num, sequence)
+      if (sequence.length > numberChains.get(numberWithLongestChain)!.length) {
+        numberWithLongestChain = num
+      }
     }
-
-    const chainsSortedDesc = [...numberChains.entries()].sort((a, b) => b[1].length - a[1].length)
-    const longestChain = chainsSortedDesc[0]
-    const number = longestChain[0]
-    this.log(`The starting number under ${upperLimit} that produces the longest chain is ${number}`)
+    this.log(`The starting number under ${upperLimit} that produces the longest chain is ${numberWithLongestChain}`)
   }
 
   private _getCollatzSequence(sequence: number []): number[] {
