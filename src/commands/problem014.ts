@@ -30,7 +30,7 @@ export default class Problem014 extends Command {
 
     let numberWithLongestChain = 1
     for (let num = 1; num < upperLimit; num++) {
-      const sequence = this._getCollatzSequence([num])
+      const sequence = this._getCollatzSequence([num], numberChains)
       numberChains.set(num, sequence)
       if (sequence.length > numberChains.get(numberWithLongestChain)!.length) {
         numberWithLongestChain = num
@@ -39,14 +39,18 @@ export default class Problem014 extends Command {
     this.log(`The starting number under ${upperLimit} that produces the longest chain is ${numberWithLongestChain}`)
   }
 
-  private _getCollatzSequence(sequence: number []): number[] {
+  private _getCollatzSequence(sequence: number [], numberChainCache: Map<number, number[]>): number[] {
     const lastNumber = sequence[sequence.length - 1]
     if (lastNumber === 1) {
       return sequence
     }
     const isEven = lastNumber % 2 === 0
     const nextNumber = isEven ? lastNumber / 2 : (lastNumber * 3) + 1
+    const cached = numberChainCache.get(nextNumber) || null
+    if (cached !== null) {
+      return sequence.concat(cached)
+    }
     sequence.push(nextNumber)
-    return this._getCollatzSequence(sequence)
+    return this._getCollatzSequence(sequence, numberChainCache)
   }
 }
