@@ -21,7 +21,7 @@ export default class Problem003 extends Command {
   static args = [{name: 'number'}]
 
   async run() {
-    const {args} = this.parse(Problem003)
+    const { args } = this.parse(Problem003)
     let number = Number(args.number)
     let largestPrimeFactor: number
     if (number === 0 || number === 1) {
