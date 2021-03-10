@@ -14,7 +14,7 @@ export default class Problem001 extends Command {
   static args = [{name: 'upperLimit'}]
 
   async run() {
-    const {args} = this.parse(Problem001)
+    const { args } = this.parse(Problem001)
     const upperLimit = Number(args.upperLimit)
     const numbers = [...new Array(upperLimit).keys()]
     const sum =
