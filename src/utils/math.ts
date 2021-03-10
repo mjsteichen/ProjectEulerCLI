@@ -33,4 +33,11 @@ export default class MathUtils {
     }
     return sorted ? divisors.sort((a, b) => a - b) : divisors
   }
+
+  static factorial(num: number): number {
+    if (num === 1) {
+      return num
+    }
+    return num * this.factorial(num - 1)
+  }
 }

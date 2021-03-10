@@ -1,4 +1,5 @@
 import Command from '../base'
+import math from '../utils/math'
 
 type Tree = {
   x: number;
@@ -23,18 +24,18 @@ export default class Problem015 extends Command {
   async run() {
     const { args } = this.parse(Problem015)
     const squareSideLength = Number(args.squareSideLength)
+
     /*
-      At each point I can ask myself whether I can go "right" or "down".
-      If my current vertical position - 1 is on the grid, I can go "right"
-      If my current horizontal position + 1 is on the grid, I can go "down"
-      If there isn't something to my "right" or something to my "down", I know that I have arrived at the bottom-right terminus.
-      Need to know which routes we have already gone down.
+      NOTE (steichen) This one I had to wave the white flag on. On the bright side I learned some new stuff about math, including
+      Pascal's triangle and Binomial coefficients.
+      This problem can be boiled down to:
+      n! / (r! * (n -r)!) where
+      n = 2 * squareSideLength
+      r = squareSideLength
      */
-    const square = Array.from({ length: squareSideLength + 1 }, () => [...new Array(squareSideLength + 1).keys()])
-    console.log(square[0])
-    console.log(square[1])
-    console.log(square[2])
-    const total = 1
+    const rowIndexOfPascalsTriangle = 2 * squareSideLength
+    const columnIndexOfPascalsTriangle = squareSideLength
+    const total = math.factorial(rowIndexOfPascalsTriangle) / (math.factorial(columnIndexOfPascalsTriangle) * math.factorial(rowIndexOfPascalsTriangle - columnIndexOfPascalsTriangle))
     this.log(`The total number of routes to the bottom right corner of a ${squareSideLength} x ${squareSideLength} grid is ${total}`)
   }
 }
