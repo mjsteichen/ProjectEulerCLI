@@ -17,10 +17,8 @@ export default class Problem016 extends Command {
     const { args } = this.parse(Problem016)
     const exponent = Number(args.exponent)
     const base = Number(args.base)
-    let product = 1
-    for (let i = 1; i <= exponent; i++) {
-      product *= base
-    }
+    // eslint-disable-next-line new-cap
+    const product = BigInt(base ** exponent)
     const sumOfDigits = product
       .toString()
       .split('')
